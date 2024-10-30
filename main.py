@@ -1,7 +1,8 @@
 import requests as r
 import json
 
-def create_netlify_site(access_token, name, subdomain):
+
+def create_netlify_site(access_token, subdomain):
     url = "https://api.netlify.com/api/v1/sites"
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -73,21 +74,21 @@ def retry_latest_deploy(site_id, access_token):
         return {"error": "No deploys found for the specified site and branch."}
 
 
-access_token = "nfp_GJCt9NynJD3d2U1WBxRND4eHqYzJ16wce6d3"
-account_id = "67206915fbe6e26f03c90c10"
+access_token = ""
+account_id = ""
 
 # Extracted from zapier
-name = inputData['name']
-email = inputData['email']
-phone = inputData['phone']
-address = inputData['address']
-logo = inputData['logo']
-color = inputData['color']
-image = inputData['image']
+name = inputData["name"]
+email = inputData["email"]
+phone = inputData["phone"]
+address = inputData["address"]
+logo = inputData["logo"]
+color = inputData["color"]
+image = inputData["image"]
 
-subdomain = inputData['subdomain']
+subdomain = inputData["subdomain"]
 
-site_response = create_netlify_site(access_token, name, subdomain)
+site_response = create_netlify_site(access_token, subdomain)
 print(site_response)
 if "id" in site_response.keys():
     site_id = site_response["id"]
@@ -95,8 +96,16 @@ if "id" in site_response.keys():
 
     output = {"url": site_url}
 
-    env_vars = [("COMPANY_NAME", name), ("COMPANY_EMAIL", email), ("COMPANY_PHONE", phone), ("COMPANY_ADDRESS", address), ("COMPANY_LOGO", logo), ("COMPANY_COLOR", color), ("COMPANY_IMAGE", image)]
-    
+    env_vars = [
+        ("COMPANY_NAME", name),
+        ("COMPANY_EMAIL", email),
+        ("COMPANY_PHONE", phone),
+        ("COMPANY_ADDRESS", address),
+        ("COMPANY_LOGO", logo),
+        ("COMPANY_COLOR", color),
+        ("COMPANY_IMAGE", image),
+    ]
+
     env_response = set_env_var(account_id, site_id, access_token, env_vars)
     if env_response:
         deploy_response = retry_latest_deploy(site_id, access_token)
